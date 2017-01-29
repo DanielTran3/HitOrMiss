@@ -291,7 +291,7 @@ public class MainGUI extends AppCompatActivity {
 //                        cardCounter++;
                         playerCards = playerCards + output.get(0).data().get(0).asConcept().name() + " | ";
                         displayPlayer.setText(playerCards);
-                        hitOrStay.setText(playerCount);
+                        hitOrStay.setText(Integer.toString(playerCount));
                     }
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
