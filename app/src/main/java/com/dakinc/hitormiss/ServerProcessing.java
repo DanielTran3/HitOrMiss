@@ -56,8 +56,10 @@ public class ServerProcessing {
 //                    .plus(ClarifaiInput.forImage(ClarifaiImage.of("https://usercontent1.hubstatic.com/718512_f260.jpg"))
 //                            .withConcepts(Concept.forID("10Spades"))).executeSync();
                 client.addInputs()
-                        .plus(ClarifaiInput.forImage(ClarifaiImage.of("https://usercontent2.hubstatic.com/718481_f260.jpg"))
-                                .withConcepts(Concept.forID("4Spades"))).executeSync().get();
+//                        .plus(ClarifaiInput.forImage(ClarifaiImage.of("https://usercontent2.hubstatic.com/718481_f260.jpg"))
+//                            .withConcepts(Concept.forID("4Spades")))
+                        .plus(ClarifaiInput.forImage(ClarifaiImage.of("http://imgur.com/a/uz0nc.jpg"))
+                            .withConcepts(Concept.forID("8"))).executeSync().get();
 //                for (int i = 0; i < 13; i++) {
 //                    client.createModel("cards")
 //                            .withOutputInfo(ConceptOutputInfo.forConcepts(Concept.forID(CardCollection.getListOfCardConcepts()[i]))).executeSync();

@@ -34,13 +34,6 @@ public class MainGUI extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    final String clientID = "lE170UkqyLAsmqIfhE74b6zOarcAft-nw8Mbn7xx";
-    final String clientSecret = "d2WvO1UcnrnINd27PExWcQ3WMsUtRx3X-ClLXlNN";
-
-    final ClarifaiClient client = new ClarifaiBuilder(clientID, clientSecret)
-            .client(new OkHttpClient()) // OPTIONAL. Allows customization of OkHttp by the user
-            .buildSync(); // or use .build() to get a Future<ClarifaiClient>
-
     TextView displayText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,9 +115,9 @@ public class MainGUI extends AppCompatActivity {
         // If the request was successful, perform image processing
             if (resultCode == RESULT_OK) {
                 Toast.makeText(MainGUI.this, "Successfully Took a Photo!",Toast.LENGTH_SHORT).show();
-                Bitmap test = (Bitmap) data.getExtras().get("data");
+                Bitmap picture = (Bitmap) data.getExtras().get("data");
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                test.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                picture.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
 //                byte[] photoToProcess = data.getByteArrayExtra("pred");
 
@@ -148,9 +141,7 @@ public class MainGUI extends AppCompatActivity {
                     Thread.sleep(1000);
                     output = predictionResults.get();
                     displayText.setText(output.get(0).data().get(0).asConcept().name());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
             }
