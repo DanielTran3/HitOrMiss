@@ -5,21 +5,86 @@ package com.dakinc.hitormiss;
  */
 
 public class Card {
-    private int value;
-    private int suit;
+    private String value;
+//    private int suit;
 
-    private static String values[] = {"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King" };
-    private static String suits[] = {"Diamonds", "Clubs", "Hearts", "Spades"};
+    private static String values[] = {"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
+//    private static String suits[] = {"Diamonds", "Clubs", "Hearts", "Spades"};
 
-    public int getValue() {
+//    public final static int SPADES = 0;   // Codes for the 4 suits, plus Joker.
+//    public final static int HEARTS = 1;
+//    public final static int DIAMONDS = 2;
+//    public final static int CLUBS = 3;
+//
+//    public final static int ACE = 1;      // Codes for the non-numeric cards.
+//    public final static int JACK = 11;    //   Cards 2 through 10 have their
+//    public final static int QUEEN = 12;   //   numerical values for their codes.
+//    public final static int KING = 13;
+
+    public Card(int Value) {
+        this.value = valueToString(Value);
+    }
+
+    public String getValue() {
         return this.value;
     }
 
-    public int getSuit() {
-        return this.suit;
+//    public int getSuit() {
+//        return this.suit;
+//    }
+
+//    public String suitToString() {
+//        switch (suit) {
+//            case SPADES:
+//                return suits[3];
+//            case HEARTS:
+//                return suits[2];
+//            case CLUBS:
+//                return suits[1];
+//            case DIAMONDS:
+//                return suits[0];
+//        }
+//    }
+
+    public String valueToString(int Value) {
+        if (Value < 1 || Value > 13) {
+            return null;
+        } else {
+            switch ( Value ) {
+                case 1:
+                    return values[0];
+                case 2:
+                    return values[1];
+                case 3:
+                    return values[2];
+                case 4:
+                    return values[3];
+                case 5:
+                    return values[4];
+                case 6:
+                    return values[5];
+                case 7:
+                    return values[6];
+                case 8:
+                    return values[7];
+                case 9:
+                    return values[8];
+                case 10:
+                    return values[9];
+                case 11:
+                    return values[10];
+                case 12:
+                    return values[11];
+                case 13:
+                    return values[12];
+            }
+        }
+        return null;
     }
 
-    public void Card(int Value) {
-        this.value = Value;
+    public void setCard(int Value) {
+        this.value = valueToString(Value);
+//        this.valueToString();
+//        this.suit = Suit;
     }
 }
