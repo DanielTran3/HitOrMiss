@@ -1,7 +1,36 @@
 package com.dakinc.hitormiss;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import clarifai2.api.ClarifaiBuilder;
+import clarifai2.api.ClarifaiClient;
+import clarifai2.api.ClarifaiResponse;
+import clarifai2.api.request.input.SearchClause;
+import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.input.SearchHit;
+import clarifai2.dto.input.image.ClarifaiImage;
+import clarifai2.dto.model.ConceptModel;
+import clarifai2.dto.model.output.ClarifaiOutput;
+import clarifai2.dto.model.output_info.ConceptOutputInfo;
+import clarifai2.dto.prediction.Concept;
+import clarifai2.dto.prediction.Prediction;
+import okhttp3.OkHttpClient;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,23 +39,56 @@ import java.io.ObjectOutputStream;
 
 public class MainGUI extends AppCompatActivity {
 
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    TextView displayPlayer;
+    TextView displayDealer;
+    TextView hitOrStay;
+    String playerCards = "";
+    ImageButton cameraButton;
+    ArrayList<Integer> cardsOnBoard = new ArrayList<>();
+    int cardCounter = 0;
+
+    Boolean player = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_gui);
 
+        try {
+            ServerProcessing.SetUpModelTask newModel = new ServerProcessing.SetUpModelTask();
+            newModel.execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        displayPlayer = (TextView) findViewById(R.id.PlayerCards);
+        displayDealer = (TextView) findViewById(R.id.DealerCards);
+        cameraButton = (ImageButton) findViewById(R.id.imageButton);
         Deck real_deck = new Deck(3);
 
-        // Player's faceup total
-        int player_total = 1111111;
-
+        cameraButton.performClick();
         // Dealer's faceup total (1 card)
-        int dealer_total = 1111111;
+        int dealer_total = cardsOnBoard.get(cardCounter - 1);
+        real_deck.removeCard(dealer_total);
+        Toast.makeText(MainGUI.this, Integer.toString(dealer_total) ,Toast.LENGTH_SHORT).show();
+
+        cameraButton.performClick();
+        // Player's faceup total
+        int player_total = cardsOnBoard.get(cardCounter - 1);
+        real_deck.removeCard(cardsOnBoard.get(cardCounter - 1));
+        Toast.makeText(MainGUI.this, Integer.toString(dealer_total) ,Toast.LENGTH_SHORT).show();
+
+        cameraButton.performClick();
+        player_total += cardsOnBoard.get(cardCounter - 1);
+        real_deck.removeCard(cardsOnBoard.get(cardCounter - 1));
+        Toast.makeText(MainGUI.this, Integer.toString(dealer_total) ,Toast.LENGTH_SHORT).show();
+
+
+
 
         ///// Removal of Cards from deck
-        real_deck.removeCard(11111);
-        real_deck.removeCard(11111);
-        real_deck.removeCard(11111);
 
         /// Calculate % of what dealer might get
         Double lowerbound_prob = real_deck.subSeventeen(dealer_total);
@@ -56,6 +118,7 @@ public class MainGUI extends AppCompatActivity {
                         }
                         else {
                             // HIT
+
                             if (player_total > 21) {
                                 break;
                             }
@@ -147,10 +210,71 @@ public class MainGUI extends AppCompatActivity {
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
             ObjectInputStream ois = new ObjectInputStream(bais);
             return ois.readObject();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    // Check which request we're responding to
+        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+        // If the request was successful, perform image processing
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(MainGUI.this, "Successfully Took a Photo!",Toast.LENGTH_SHORT).show();
+                Bitmap picture = (Bitmap) data.getExtras().get("data");
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                picture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+//                byte[] photoToProcess = data.getByteArrayExtra("pred");
+
+//                final List<ClarifaiOutput<Concept>> predictionResults =
+//                        client.getDefaultModels().generalModel() // You can also do client.getModelByID("id") to get custom models
+//                                .predict()
+//                                .withInputs(
+//                                        ClarifaiInput.forImage(ClarifaiImage.of(photoToProcess))
+//                                )
+//                                .executeSync()
+//                                .get();
+
+                try {
+                    List<ClarifaiOutput<Prediction>> output;
+                    ServerProcessing.PredictTask predictionResults = new ServerProcessing.PredictTask();
+                    predictionResults.execute(byteArray);
+//                    output = predictionResults.get(100, TimeUnit.MILLISECONDS);
+//                    List<ClarifaiOutput<Concept>> output;
+//                    ServerProcessing.DefaultPredictTask predictionResults = new ServerProcessing.DefaultPredictTask();
+//                    predictionResults.execute(byteArray);
+                    Thread.sleep(1000);
+                    output = predictionResults.get();
+                    if (player == false) {
+                        cardsOnBoard.add(cardCounter, Integer.parseInt(output.get(0).data().get(0).asConcept().name()));
+                        cardCounter++;
+                        displayDealer.setText(output.get(0).data().get(0).asConcept().name());
+                        player = true;
+                    }
+                    else {
+                        cardsOnBoard.add(cardCounter, Integer.parseInt(output.get(0).data().get(0).asConcept().name()));
+                        cardCounter++;
+                        playerCards = playerCards + output.get(0).data().get(0).asConcept().name() + " | ";
+                        displayPlayer.setText(playerCards);
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                    Toast.makeText(MainGUI.this, "Exited Without Taking a Photo.",Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
+    public void startCamera(View v) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
 }
+
+

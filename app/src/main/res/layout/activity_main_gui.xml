@@ -18,7 +18,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="@dimen/activity_vertical_margin"
         android:inputType="textPersonName"
@@ -36,7 +36,7 @@
         android:layout_alignParentStart="true"
         android:id="@+id/DealerText" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="@dimen/activity_vertical_margin"
         android:inputType="textPersonName"
@@ -47,7 +47,7 @@
         android:layout_alignParentStart="true"
         android:id="@+id/DealerCards" />
 
-    <ListView
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/DealerCards"
@@ -56,12 +56,12 @@
         android:id="@+id/details"/>
 
     <ImageButton
+        android:onClick="startCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@android:drawable/ic_menu_camera"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:id="@+id/imageButton" />
-
 
 </RelativeLayout>
