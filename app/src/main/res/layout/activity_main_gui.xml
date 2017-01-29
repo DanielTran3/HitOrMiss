@@ -9,8 +9,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.dakinc.hitormiss.MainGUI">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+    <Button
+        android:id="@+id/testButton"
+        android:layout_width="100pt"
+        android:layout_height="100pt"
+        android:onClick="testButton"/>
+    <ImageView
+        android:id="@+id/testImage"
+        android:layout_width="200pt"
+        android:layout_height="200pt"
+        android:layout_below="@+id/testButton"/>
 </RelativeLayout>
