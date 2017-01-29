@@ -2,13 +2,13 @@ package com.dakinc.hitormiss;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import clarifai2.dto.prediction.Concept;
 
 public class CardCollection {
-    private static Collection<Concept> collectionOfCards;
-    private String[] cardNames = new String[]{"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
-    private String[] cardPictureURL = new String[]{
+    private static String[] cardNames = new String[]{"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
+    private static String[] cardPictureURL = new String[]{
             //Ace
             "http://i.imgur.com/mMauBa7.jpg",
             "http://i.imgur.com/pfO2UDP.jpg",
@@ -75,13 +75,12 @@ public class CardCollection {
             "http://i.imgur.com/6oj44Jl.jpg",
             "http://i.imgur.com/tua9ify.jpg",
     };
-    public CardCollection() {
-        collectionOfCards = new ArrayList<>();
-        for (int i = 0 ; i < 52; i++) {
-//            collectionOfCards.add(Concept.forID(i));
-        }
+
+    public static String[] getListOfCardConcepts() {
+        return cardNames;
     }
-    public static Collection<Concept> getCollection() {
-        return collectionOfCards;
+
+    public static String[] getListOfCardPictureURL() {
+        return cardPictureURL;
     }
 }

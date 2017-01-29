@@ -47,8 +47,14 @@ public class MainGUI extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_gui);
 
-        ServerProcessing.SetUpModelTask newModel = new ServerProcessing.SetUpModelTask();
-        newModel.execute();
+        try {
+            ServerProcessing.SetUpModelTask newModel = new ServerProcessing.SetUpModelTask();
+            newModel.execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
 //        //Create Model
 //        client.createModel("cards")
@@ -121,9 +127,7 @@ public class MainGUI extends AppCompatActivity {
                 test.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
 //                byte[] photoToProcess = data.getByteArrayExtra("pred");
-                List<ClarifaiOutput<Prediction>> output;
-                ServerProcessing.PredictTask predictionResults = new ServerProcessing.PredictTask();
-                predictionResults.execute(byteArray);
+
 //                final List<ClarifaiOutput<Concept>> predictionResults =
 //                        client.getDefaultModels().generalModel() // You can also do client.getModelByID("id") to get custom models
 //                                .predict()
@@ -134,14 +138,19 @@ public class MainGUI extends AppCompatActivity {
 //                                .get();
 
                 try {
+                    List<ClarifaiOutput<Prediction>> output;
+                    ServerProcessing.PredictTask predictionResults = new ServerProcessing.PredictTask();
+                    predictionResults.execute(byteArray);
 //                    output = predictionResults.get(100, TimeUnit.MILLISECONDS);
-                    output = predictionResults.get(1000, TimeUnit.MINUTES);
+//                    List<ClarifaiOutput<Concept>> output;
+//                    ServerProcessing.DefaultPredictTask predictionResults = new ServerProcessing.DefaultPredictTask();
+//                    predictionResults.execute(byteArray);
+                    Thread.sleep(1000);
+                    output = predictionResults.get();
                     displayText.setText(output.get(0).data().get(0).asConcept().name());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (TimeoutException e) {
                     e.printStackTrace();
                 }
             }
