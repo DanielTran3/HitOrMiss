@@ -47,8 +47,8 @@ public class MainGUI extends AppCompatActivity {
     String playerCards = "";
     ImageButton cameraButton;
     ArrayList<Integer> cardsOnBoard = new ArrayList<>();
-    int cardCounter = 0;
-
+//    int cardCounter = 0;
+    int playerCount = 0;
     Boolean player = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,141 +65,140 @@ public class MainGUI extends AppCompatActivity {
         }
         displayPlayer = (TextView) findViewById(R.id.PlayerCards);
         displayDealer = (TextView) findViewById(R.id.DealerCards);
-        cameraButton = (ImageButton) findViewById(R.id.imageButton);
-        Deck real_deck = new Deck(3);
-
-        cameraButton.performClick();
-        // Dealer's faceup total (1 card)
-        int dealer_total = cardsOnBoard.get(cardCounter - 1);
-        real_deck.removeCard(dealer_total);
-        Toast.makeText(MainGUI.this, Integer.toString(dealer_total) ,Toast.LENGTH_SHORT).show();
-
-        cameraButton.performClick();
-        // Player's faceup total
-        int player_total = cardsOnBoard.get(cardCounter - 1);
-        real_deck.removeCard(cardsOnBoard.get(cardCounter - 1));
-        Toast.makeText(MainGUI.this, Integer.toString(dealer_total) ,Toast.LENGTH_SHORT).show();
-
-        cameraButton.performClick();
-        player_total += cardsOnBoard.get(cardCounter - 1);
-        real_deck.removeCard(cardsOnBoard.get(cardCounter - 1));
-        Toast.makeText(MainGUI.this, Integer.toString(dealer_total) ,Toast.LENGTH_SHORT).show();
-
-
-
-
-        ///// Removal of Cards from deck
-
-        /// Calculate % of what dealer might get
-        Double lowerbound_prob = real_deck.subSeventeen(dealer_total);
-        Double upperbound_prob = real_deck.seventeenUp(dealer_total);
-
-        Double weighted_average;
-        int threshold = 0;
-
-        if (upperbound_prob > lowerbound_prob) {
-            // Sequence #1
-            weighted_average = real_deck.weightedAverage(17 - dealer_total, 21 - dealer_total);
-            threshold = (int) Math.ceil(weighted_average) + dealer_total;
-            Deck fake_deck = (Deck) deepClone(real_deck);
-            fake_deck.removeClosest((int) Math.ceil(weighted_average));
-            while(true) {
-                if (player_total >= threshold) {
-                    // STAY
-                    break;
-                } else {
-                    if (fake_deck.minProbability(21 - player_total) > fake_deck.minProbability(player_total - dealer_total)) {
-                        // STAY
-                        break;
-                    } else {
-                        if (fake_deck.minProbability(21 - player_total) > 0.5) {
-                            // STAY
-                            break;
-                        }
-                        else {
-                            // HIT
-
-                            if (player_total > 21) {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        else {
-            while(true) {
-                // Sequence #2
-                weighted_average = real_deck.weightedAverage(1, 16 - dealer_total);
-                threshold = (int) Math.ceil(weighted_average) + dealer_total;
-                Deck fake_deck = (Deck) deepClone(real_deck);
-                fake_deck.removeClosest((int) Math.ceil(weighted_average));
-
-                //Sequence #3
-                while(true) {
-                    if (threshold > player_total) {
-                        while(true) {
-                            if (fake_deck.minProbability(21 - player_total) > fake_deck.minProbability(player_total - dealer_total)) {
-                                // STAY
-                                break;
-                            } else {
-                                if (fake_deck.minProbability(21 - player_total) > 0.5) {
-                                    // STAY
-                                    break;
-                                }
-                                else {
-                                    // HIT
-                                    if (player_total > 21) {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    }
-                    else {
-                        if (fake_deck.minProbability(21 - dealer_total) >= 0.5) {
-                            // STAY
-                            break;
-                        }
-                        else {
-                            lowerbound_prob = fake_deck.subSeventeen(dealer_total);
-                            upperbound_prob = fake_deck.maxProbability(21 - dealer_total);
-                            if (upperbound_prob > lowerbound_prob) {
-                                // Sequence #1
-                                weighted_average = fake_deck.weightedAverage(17 - dealer_total, 21 - dealer_total);
-                                threshold += (int) Math.ceil(weighted_average);
-                                fake_deck.removeClosest((int) Math.ceil(weighted_average));
-                                while (true) {
-                                    if (player_total >= threshold) {
-                                        // STAY
-                                        break;
-                                    } else {
-                                        if (fake_deck.minProbability(21 - player_total) > fake_deck.minProbability(player_total - dealer_total)) {
-                                            // STAY
-                                            break;
-                                        } else {
-                                            if (fake_deck.minProbability(21 - player_total) > 0.5) {
-                                                // STAY
-                                                break;
-                                            }
-                                            else {
-                                                // HIT
-                                                if (player_total > 21) {
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-                break;
-            }
-        }
+        hitOrStay = (TextView) findViewById(R.id.details);
+//        cameraButton = (ImageButton) findViewById(R.id.imageButton);
+//        Deck real_deck = new Deck(3);
+//
+//        cameraButton.performClick();
+//        // Dealer's faceup total (1 card)
+//        int dealer_total = cardsOnBoard.get(cardCounter - 1);
+//        real_deck.removeCard(dealer_total);
+//        Toast.makeText(MainGUI.this, Integer.toString(dealer_total) ,Toast.LENGTH_SHORT).show();
+//
+//        cameraButton.performClick();
+//        // Player's faceup total
+//        int player_total = cardsOnBoard.get(cardCounter - 1);
+//        real_deck.removeCard(cardsOnBoard.get(cardCounter - 1));
+//        Toast.makeText(MainGUI.this, Integer.toString(dealer_total) ,Toast.LENGTH_SHORT).show();
+//
+//        cameraButton.performClick();
+//        player_total += cardsOnBoard.get(cardCounter - 1);
+//        real_deck.removeCard(cardsOnBoard.get(cardCounter - 1));
+//        Toast.makeText(MainGUI.this, Integer.toString(dealer_total) ,Toast.LENGTH_SHORT).show();
+//
+//
+//        ///// Removal of Cards from deck
+//
+//        /// Calculate % of what dealer might get
+//        Double lowerbound_prob = real_deck.subSeventeen(dealer_total);
+//        Double upperbound_prob = real_deck.seventeenUp(dealer_total);
+//
+//        Double weighted_average;
+//        int threshold = 0;
+//
+//        if (upperbound_prob > lowerbound_prob) {
+//            // Sequence #1
+//            weighted_average = real_deck.weightedAverage(17 - dealer_total, 21 - dealer_total);
+//            threshold = (int) Math.ceil(weighted_average) + dealer_total;
+//            Deck fake_deck = (Deck) deepClone(real_deck);
+//            fake_deck.removeClosest((int) Math.ceil(weighted_average));
+//            while(true) {
+//                if (player_total >= threshold) {
+//                    // STAY
+//                    break;
+//                } else {
+//                    if (fake_deck.minProbability(21 - player_total) > fake_deck.minProbability(player_total - dealer_total)) {
+//                        // STAY
+//                        break;
+//                    } else {
+//                        if (fake_deck.minProbability(21 - player_total) > 0.5) {
+//                            // STAY
+//                            break;
+//                        }
+//                        else {
+//                            // HIT
+//
+//                            if (player_total > 21) {
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        else {
+//            while(true) {
+//                // Sequence #2
+//                weighted_average = real_deck.weightedAverage(1, 16 - dealer_total);
+//                threshold = (int) Math.ceil(weighted_average) + dealer_total;
+//                Deck fake_deck = (Deck) deepClone(real_deck);
+//                fake_deck.removeClosest((int) Math.ceil(weighted_average));
+//
+//                //Sequence #3
+//                while(true) {
+//                    if (threshold > player_total) {
+//                        while(true) {
+//                            if (fake_deck.minProbability(21 - player_total) > fake_deck.minProbability(player_total - dealer_total)) {
+//                                // STAY
+//                                break;
+//                            } else {
+//                                if (fake_deck.minProbability(21 - player_total) > 0.5) {
+//                                    // STAY
+//                                    break;
+//                                }
+//                                else {
+//                                    // HIT
+//                                    if (player_total > 21) {
+//                                        break;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        break;
+//                    }
+//                    else {
+//                        if (fake_deck.minProbability(21 - dealer_total) >= 0.5) {
+//                            // STAY
+//                            break;
+//                        }
+//                        else {
+//                            lowerbound_prob = fake_deck.subSeventeen(dealer_total);
+//                            upperbound_prob = fake_deck.maxProbability(21 - dealer_total);
+//                            if (upperbound_prob > lowerbound_prob) {
+//                                // Sequence #1
+//                                weighted_average = fake_deck.weightedAverage(17 - dealer_total, 21 - dealer_total);
+//                                threshold += (int) Math.ceil(weighted_average);
+//                                fake_deck.removeClosest((int) Math.ceil(weighted_average));
+//                                while (true) {
+//                                    if (player_total >= threshold) {
+//                                        // STAY
+//                                        break;
+//                                    } else {
+//                                        if (fake_deck.minProbability(21 - player_total) > fake_deck.minProbability(player_total - dealer_total)) {
+//                                            // STAY
+//                                            break;
+//                                        } else {
+//                                            if (fake_deck.minProbability(21 - player_total) > 0.5) {
+//                                                // STAY
+//                                                break;
+//                                            }
+//                                            else {
+//                                                // HIT
+//                                                if (player_total > 21) {
+//                                                    break;
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
+//                break;
+//            }
+//        }
     }
 
     public static Object deepClone(Object object) {
@@ -249,16 +248,50 @@ public class MainGUI extends AppCompatActivity {
                     Thread.sleep(1000);
                     output = predictionResults.get();
                     if (player == false) {
-                        cardsOnBoard.add(cardCounter, Integer.parseInt(output.get(0).data().get(0).asConcept().name()));
-                        cardCounter++;
+                        if (output.get(0).data().get(0).asConcept().name() == "Ace") {
+//                            cardsOnBoard.add(cardCounter, 11);
+                        }
+                        else if (output.get(0).data().get(0).asConcept().name() == "Jack") {
+//                            cardsOnBoard.add(cardCounter, 10);
+                        }
+                        else if (output.get(0).data().get(0).asConcept().name() == "Queen") {
+//                            cardsOnBoard.add(cardCounter, 10);
+                        }
+                        else if (output.get(0).data().get(0).asConcept().name() == "King") {
+//                            cardsOnBoard.add(cardCounter, 10);
+                        }
+                        else {
+//                            cardsOnBoard.add(cardCounter, Integer.parseInt(output.get(0).data().get(0).asConcept().name()));
+                        }
+//                        cardCounter++;
                         displayDealer.setText(output.get(0).data().get(0).asConcept().name());
                         player = true;
                     }
                     else {
-                        cardsOnBoard.add(cardCounter, Integer.parseInt(output.get(0).data().get(0).asConcept().name()));
-                        cardCounter++;
+                        if (output.get(0).data().get(0).asConcept().name() == "Ace") {
+//                            cardsOnBoard.add(cardCounter, 11);
+                            playerCount += 11;
+                        }
+                        else if (output.get(0).data().get(0).asConcept().name().equals("Jack")) {
+//                            cardsOnBoard.add(cardCounter, 10);
+                            playerCount += 10;
+                        }
+                        else if (output.get(0).data().get(0).asConcept().name().equals("Queen")) {
+//                            cardsOnBoard.add(cardCounter, 10);
+                            playerCount += 10;
+                        }
+                        else if (output.get(0).data().get(0).asConcept().name().equals("King")) {
+//                            cardsOnBoard.add(cardCounter, 10);
+                            playerCount += 10;
+                        }
+                        else {
+//                            cardsOnBoard.add(cardCounter, Integer.parseInt(output.get(0).data().get(0).asConcept().name()));
+                            playerCount += Integer.parseInt(output.get(0).data().get(0).asConcept().name());
+                        }
+//                        cardCounter++;
                         playerCards = playerCards + output.get(0).data().get(0).asConcept().name() + " | ";
                         displayPlayer.setText(playerCards);
+                        hitOrStay.setText(playerCount);
                     }
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
