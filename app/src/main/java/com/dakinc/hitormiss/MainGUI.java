@@ -27,6 +27,7 @@ import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.dto.prediction.Prediction;
 import okhttp3.OkHttpClient;
 
 public class MainGUI extends AppCompatActivity {
@@ -120,7 +121,7 @@ public class MainGUI extends AppCompatActivity {
                 test.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
 //                byte[] photoToProcess = data.getByteArrayExtra("pred");
-                List<ClarifaiOutput<Concept>> output;
+                List<ClarifaiOutput<Prediction>> output;
                 ServerProcessing.PredictTask predictionResults = new ServerProcessing.PredictTask();
                 predictionResults.execute(byteArray);
 //                final List<ClarifaiOutput<Concept>> predictionResults =
@@ -133,8 +134,9 @@ public class MainGUI extends AppCompatActivity {
 //                                .get();
 
                 try {
-                    output = predictionResults.get(100, TimeUnit.MILLISECONDS);
-                    displayText.setText(output.get(0).data().get(0).name().toString());
+//                    output = predictionResults.get(100, TimeUnit.MILLISECONDS);
+                    output = predictionResults.get(1000, TimeUnit.MINUTES);
+                    displayText.setText(output.get(0).data().get(0).asConcept().name());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
